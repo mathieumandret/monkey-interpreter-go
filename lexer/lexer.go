@@ -75,19 +75,19 @@ func (l *Lexer) NextToken() token.Token {
 // TODO: readIdentifier and readNumber are too similar not
 // to factor.
 func (l *Lexer) readIdentifier() string {
-    position := l.position
+    startpos := l.position
     for isLetter(l.currentChar) {
         l.readChar()
     }
-    return l.input[position:l.position]
+    return l.input[startpos:l.position]
 }
 
 func (l *Lexer) readNumber() string {
-    position:= l.position
+    startpos := l.position
     for isDigit(l.currentChar) {
         l.readChar();
     }
-    return l.input[position:l.position]
+    return l.input[startpos:l.position]
 }
 
 func (l *Lexer) skipWhitespace() {
