@@ -25,6 +25,8 @@ const (
     BANG = "!"
     ASTERISK = "*"
     SLASH = "/"
+    EQ = "=="
+    NOT_EQ = "!="
 
     LT = "<"
     GT = ">"

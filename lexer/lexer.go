@@ -15,8 +15,12 @@ func New(input string) *Lexer {
     return l
 }
 
+func (l *Lexer) atEnd() bool {
+    return l.readPosition >= len(l.input)
+}
+
 func (l *Lexer) readChar() {
-    if l.readPosition >= len (l.input) {
+    if l.atEnd() {
         l.currentChar = 0
     } else {
         l.currentChar = l.input[l.readPosition]
@@ -25,13 +29,30 @@ func (l *Lexer) readChar() {
     l.readPosition += 1
 }
 
+func (l *Lexer) peek() byte {
+    if l.atEnd() {
+        return 0
+    }
+    return l.input[l.readPosition]
+}
+
+func (l* Lexer) parseTwoCharsToken(tokenType token.TokenType) token.Token {
+    first := l.currentChar
+    l.readChar()
+    return token.Token{Type: tokenType, Literal: string(first) + string(l.currentChar)}
+}
+
 func (l *Lexer) NextToken() token.Token {
     l.skipWhitespace();
     var tok token.Token
 
     switch l.currentChar {
     case '=':
-        tok = newToken(token.ASSIGN, l.currentChar)
+        if l.peek() == '=' {
+            tok = l.parseTwoCharsToken(token.EQ)
+        } else {
+            tok = newToken(token.ASSIGN, l.currentChar)
+        }
     case ';':
         tok = newToken(token.SEMICOLON, l.currentChar)
     case '(':
@@ -43,7 +64,11 @@ func (l *Lexer) NextToken() token.Token {
     case '-':
         tok = newToken(token.MINUS, l.currentChar)
     case '!':
-        tok = newToken(token.BANG, l.currentChar)
+        if l.peek() == '=' {
+            tok = l.parseTwoCharsToken(token.NOT_EQ)
+        } else {
+            tok = newToken(token.BANG, l.currentChar)
+        }
     case '*':
         tok = newToken(token.ASTERISK, l.currentChar)
     case '/':
