@@ -72,22 +72,20 @@ func (l *Lexer) NextToken() token.Token {
     return tok
 }
 
-// TODO: readIdentifier and readNumber are too similar not
-// to factor.
-func (l *Lexer) readIdentifier() string {
+func (l *Lexer) readToken(checking_func func(byte) bool) string {
     startpos := l.position
-    for isLetter(l.currentChar) {
+    for checking_func(l.currentChar) {
         l.readChar()
     }
     return l.input[startpos:l.position]
 }
 
+func (l *Lexer) readIdentifier() string {
+    return l.readToken(isLetter)
+}
+
 func (l *Lexer) readNumber() string {
-    startpos := l.position
-    for isDigit(l.currentChar) {
-        l.readChar();
-    }
-    return l.input[startpos:l.position]
+    return l.readToken(isDigit)
 }
 
 func (l *Lexer) skipWhitespace() {
